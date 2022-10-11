@@ -1,0 +1,24 @@
+@startuml communication
+
+component user_device {
+    component client
+    component display
+}
+[brokerMQTT]
+component rasp {
+    component camera
+    component server
+}
+
+client --> brokerMQTT : 1.takePicture
+brokerMQTT --> rasp : 2.takePicture
+rasp --> server.py : 3.takePicture
+server --> camera : 4.takePicture
+camera --> server : 5.picture
+server.py --> brokerMQTT : 6.picture
+brokerMQTT --> client : 7.picture
+client --> display : 8.show
+
+
+
+@enduml
