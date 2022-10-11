@@ -2,10 +2,14 @@
 import sys
 import paho.mqtt.client as mqtt
 import cv2 as cv
+import numpy as np
+
 def sendPicture(mqttc):
     print("sendPicture")
-    # TODO: send picture
-    mqttc.publish("picam-everywhere/tm", "pictureTaken")
+    f=open("webcam.jpg", "rb") #3.7kiB in same folder
+    fileContent = f.read()
+    byteArr = bytearray(fileContent)
+    mqttc.publish("picam-everywhere/tm", byteArr)
 
 def takePicture():
     print("takePicture")
@@ -30,12 +34,17 @@ def on_message(mqttc, userdata, message):
     print("Received message: " + str(message.payload.decode("utf-8")))
     decode_msg(mqttc, str(message.payload.decode("utf-8")))
 
-def main() -> int:
+def init_mqttc():
     mqttc = mqtt.Client()
     mqttc.on_message = on_message
     mqttc.connect("broker.hivemq.com")
     mqttc.subscribe("picam-everywhere/tc")
+    return mqttc
+
+def main() -> int:
+    mqttc = init_mqttc()
     mqttc.loop_forever()
+    # Normally never execute
     mqttc.disconnect()
     return 0
 
