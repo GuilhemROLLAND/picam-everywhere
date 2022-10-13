@@ -3,6 +3,14 @@ import sys
 import paho.mqtt.client as mqtt
 import cv2 as cv
 import numpy as np
+from tkinter import *
+from tkinter import ttk
+from PIL import ImageTk
+
+
+mqttc = mqtt.Client()
+img_label = None
+
 
 def takePicture(mqttc):
     print("Send takePicture")
@@ -11,26 +19,43 @@ def takePicture(mqttc):
 
 def on_message(mqttc, userdata, message):
     print("Received message!")
+    # Deal with the message
     f = open('webcam.jpg', "wb")
     f.write(message.payload)
-    mqttc.disconnect()
-    exit()
+    f.close()
+    # Update the image
+    global img_label
+    img2 = ImageTk.PhotoImage(file="webcam.jpg")
+    img_label.configure(image=img2)
+    img_label.image = img2
 
-def init_mqttc():
-    mqttc = mqtt.Client()
+
+def init_mqttc(mqttc):
     mqttc.on_message = on_message
     mqttc.connect("broker.hivemq.com")
     mqttc.subscribe("picam-everywhere/tm")
     return mqttc
 
+def takePicture_click():
+    takePicture(mqttc)
+
 def main() -> int:
     # Start mqtt client
-    mqttc = init_mqttc()
-    # Send order to take picture
-    takePicture(mqttc)
+    global mqttc
+    mqttc = init_mqttc(mqttc)
     # Wait forever
-    print("Waiting for message...")
-    mqttc.loop_forever()
+    global img_label
+    print("GUI starting...")
+    root = Tk()
+    frm = ttk.Frame(root, padding=10)
+    frm.grid()
+    ttk.Button(frm, text="Take Picture...", command=takePicture_click).grid(column=0, row=1)
+    img = ImageTk.PhotoImage(file="webcam.jpg")
+    img_label = ttk.Label(frm, image=img)
+    img_label.grid(column=0, row=0)
+    mqttc.loop_start()
+
+    root.mainloop()
     return 0
 
 if __name__ == '__main__':
