@@ -11,14 +11,11 @@ component rasp {
 }
 
 client --> brokerMQTT : 1.takePicture
-brokerMQTT --> rasp : 2.takePicture
-rasp --> server.py : 3.takePicture
-server --> camera : 4.takePicture
-camera --> server : 5.picture
-server.py --> brokerMQTT : 6.picture
-brokerMQTT --> client : 7.picture
-client --> display : 8.show
-
-
+brokerMQTT --> server : 2.takePicture
+server --> camera : 3.takePicture
+camera --> server : 4.picture
+server --> brokerMQTT : 5.picture
+brokerMQTT --> client : 6.picture
+client --> display : 7.show
 
 @enduml
