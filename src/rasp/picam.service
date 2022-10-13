@@ -1,0 +1,9 @@
+[Unit]
+Description=Start picam-everywhere
+After=network.target
+ 
+[Service]
+ExecStart=/usr/bin/python3 /home/guilhem/picam-everywhere/src/rasp/server.py
+ 
+[Install]
+WantedBy=multi-user.target
