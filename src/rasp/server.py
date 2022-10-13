@@ -3,6 +3,8 @@ import sys
 import paho.mqtt.client as mqtt
 import cv2 as cv
 import numpy as np
+import os
+
 
 def sendPicture(mqttc):
     print("sendPicture")
@@ -14,19 +16,16 @@ def sendPicture(mqttc):
 def takePicture():
     print("takePicture")
     # initialize the camera
-    cam = cv.VideoCapture(0)   # 0 -> index of camera
-    s, img = cam.read()
-    if s:    # frame captured without any errors
-        cv.namedWindow("cam-test")
-        cv.imshow("cam-test",img)
-        cv.waitKey(1)
-        cv.destroyWindow("cam-test")
-        cv.imwrite("webcam.jpg",img) #save image
-
+    stream = os.popen('fswebcam -r 1920x1080 --no-banner webcam.jpg')
+    output = stream.read()
+    return 0
+    
 def decode_msg(mqttc, msg):
     if msg == "takePicture":
-        takePicture()
-        sendPicture(mqttc)
+        if takePicture() == 0:
+            sendPicture(mqttc)
+        else:
+            print("Error taking picture")
     else:
         print("Unknown message")
 
