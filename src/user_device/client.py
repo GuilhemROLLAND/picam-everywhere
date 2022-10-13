@@ -5,7 +5,7 @@ import cv2 as cv
 import numpy as np
 from tkinter import *
 from tkinter import ttk
-from PIL import ImageTk
+from PIL import Image, ImageTk
 
 
 mqttc = mqtt.Client()
@@ -25,7 +25,7 @@ def on_message(mqttc, userdata, message):
     f.close()
     # Update the image
     global img_label
-    img2 = ImageTk.PhotoImage(file="webcam.jpg")
+    img2 = ImageTk.PhotoImage(get_resized_img())
     img_label.configure(image=img2)
     img_label.image = img2
 
@@ -39,6 +39,9 @@ def init_mqttc(mqttc):
 def takePicture_click():
     takePicture(mqttc)
 
+def get_resized_img():
+    return Image.open("webcam.jpg").resize((960,540), Image.ANTIALIAS)
+
 def main() -> int:
     # Start mqtt client
     global mqttc
@@ -50,7 +53,8 @@ def main() -> int:
     frm = ttk.Frame(root, padding=10)
     frm.grid()
     ttk.Button(frm, text="Take Picture...", command=takePicture_click).grid(column=0, row=1)
-    img = ImageTk.PhotoImage(file="webcam.jpg")
+    # Load the image
+    img = ImageTk.PhotoImage(get_resized_img())
     img_label = ttk.Label(frm, image=img)
     img_label.grid(column=0, row=0)
     mqttc.loop_start()
