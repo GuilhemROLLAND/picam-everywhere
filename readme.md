@@ -20,6 +20,7 @@ This project is based on a Pi 4, mqtt communication, python and bash script.
 ```
 sudo ln picam-everywhere/src/rasp/picam.service /etc/systemd/system/
 sudo systemctl enable picam.service
+sudo systemctl daemon-reload
 sudo systemctl start picam.service
 ```
 ### Client side
