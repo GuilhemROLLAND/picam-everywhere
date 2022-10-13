@@ -19,7 +19,7 @@ def takePicture():
     if s:    # frame captured without any errors
         cv.namedWindow("cam-test")
         cv.imshow("cam-test",img)
-        cv.waitKey(2000)
+        cv.waitKey(1)
         cv.destroyWindow("cam-test")
         cv.imwrite("webcam.jpg",img) #save image
 
